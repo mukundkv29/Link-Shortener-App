@@ -1,0 +1,5 @@
+flask
+flask_RESTful
+flask-cors
+mysql-connector-python
+validators

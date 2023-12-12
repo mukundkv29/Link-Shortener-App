@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>URL Shortener</title>
+    <style>
+        input {
+            width: 30vw;
+            font-size: medium;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid;
+            border-color: rgb(141, 141, 141);
+            margin: 2px;
+        }
+        button {
+            width: 100px;
+            font-size: medium;
+            background-color: rgb(4, 160, 4);
+            border: solid;
+            border-color: rgb(4, 160, 4);
+            border-radius: 8px;
+            padding: 10px;
+            color: azure;
+            font-weight: bold;
+        }
+        #alias {
+            margin-right: 105px;
+        }
+        #outdiv {
+            margin: 50px;
+        }
+        div {
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <br></br>
+        <h1>URL Shortener</h1>
+        <br></br>
+    </header>
+
+    <div>
+        <br></br>
+        <div>
+            <form id="form" method="post">
+                <input id="url" type="text" placeholder='Enter your URL' required/>
+                <button type="submit">Shorten</button>
+            </form>
+            <br></br>
+            <input id="alias" type="text" placeholder='Alias (Optional)'/>
+        </div>
+        <br></br>
+        <div id="outdiv">
+            <input type="text" id="shortURL" readonly/>
+            <button onclick="myFunction()">Copy</button>
+        </div>
+    </div>
+</body>
+<script>
+    var form = document.getElementById('form')
+    form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        var url = document.getElementById('url').value
+        var alias = document.getElementById('alias').value
+
+        fetch('http://127.0.0.1:5000/shorten', {
+            method: 'POST',
+            body: JSON.stringify({
+                url: url,
+                alias: alias,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            }
+        })
+            .then(function (response) {
+                return response.json()
+            })
+            .then(function (data) {
+                console.log(data)
+                shortURL = document.getElementById("shortURL")
+                if (data.status != 2) {
+                    shortURL.value = data.message
+                }
+                else shortURL.value = data.shortLink
+            }).catch(error => console.error('Error:', error));
+    });
+
+    function myFunction() {
+        var copyText = document.getElementById("shortURL");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+    }
+
+</script>
+</html>
